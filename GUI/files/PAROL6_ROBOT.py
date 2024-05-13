@@ -53,7 +53,8 @@ Joints_standby_position_radian = [np.deg2rad(angle) for angle in Joints_standby_
 
 # values you get after homing robot and moving it to its most left and right sides
 # In degrees
-Joint_limits_degree =[[-123.046875,123.046875], [-145.0088,-3.375], [107.866,287.8675], [-105.46975,105.46975], [-90,90], [0,360]] 
+# Joint_limits_degree =[[-123.046875,123.046875], [-145.0088,-3.375], [107.866,287.8675], [-105.46975,105.46975], [-90,90], [0,360]] 
+Joint_limits_degree =[[-360, 360], [-145.0088,-3.375], [107.866,287.8675], [-105.46975,105.46975], [-90,90], [0,360]] 
 
 # in radians
 Joint_limits_radian = []

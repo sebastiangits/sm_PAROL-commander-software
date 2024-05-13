@@ -24,7 +24,7 @@ from spatialmath.base.argcheck import (
     getvector,
     isscalar,
 )
-import new_function_for_PAROL
+# import new_function_for_PAROL
 
 
 
