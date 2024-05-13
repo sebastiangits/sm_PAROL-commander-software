@@ -24,11 +24,11 @@ from spatialmath.base.argcheck import (
     getvector,
     isscalar,
 )
+# import new_function_for_PAROL
 
 
 
-#my_os = platform.system()
-my_os = "Linux"
+my_os = platform.system()
 if my_os == "Windows":
     Image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)))
     logging.debug("Os is Windows")
@@ -43,7 +43,7 @@ logging.basicConfig(level = logging.DEBUG,
 )
 
 if my_os == "Windows": 
-    STARTING_PORT = '/dev/cu.usbmodem206F367834301' # COM3
+    STARTING_PORT = 8 # COM3
 else:   
     STARTING_PORT = 0
 # if using linux this will add /dev/ttyACM + 0 ---> /dev/ttyACM0
@@ -58,7 +58,7 @@ if my_os == "Windows":
         ser = serial.Serial()
 elif my_os == "Linux":
     try:
-        str_port = '/dev/cu.usbmodem206F367834301'
+        str_port = '/dev/ttyACM' + str(STARTING_PORT)
         ser = serial.Serial(port=str_port, baudrate=3000000, timeout=0)
     except:
         ser = serial.Serial()
@@ -439,6 +439,7 @@ def Task1(shared_string,Position_out,Speed_out,Command_out,Affected_joint_out,In
                     VALID_COMMANDS = PAROL6_ROBOT.Commands_list_true
 
                     # Open execute_script.txt
+                    print("\n\n\n\n I should be running this\n\n\n\n")
                     text_file = open(Image_path + "/Programs/execute_script.txt",'r')
                     code_string = text_file.readlines()
                     text_file.close()
@@ -2050,6 +2051,40 @@ def Task3(shared_string,Position_out,Speed_out,Command_out,Affected_joint_out,In
 
         time.sleep(3)
 
+def reading_text_file(shared_string,Position_out,Speed_out,Command_out,Affected_joint_out,InOut_out,Timeout_out,Gripper_data_out,
+         Position_in,Speed_in,Homed_in,InOut_in,Temperature_error_in,Position_error_in,Timeout_error,Timing_data_in,
+         XTR_data,Gripper_data_in,
+        Joint_jog_buttons,Cart_jog_buttons,Jog_control,General_data,Buttons):
+    while 1:
+        input_file_path = "/stored_input.txt"
+        path_to_stored_input = Image_path + input_file_path
+        # print("\n\n\n\n\n I am here \n\n\n\n\n")
+
+        text_file = open(path_to_stored_input, "r")
+        stored_input = text_file.readlines()
+        text_file.close()
+        # print(f"\n\n\n\n\n {type(stored_input)} \n\n\n\n\n")
+
+        # if stored_input != stored_input_previous:
+        #     Buttons[7] = 1
+        #     stored_input_previous = stored_input
+        # else:
+        #     Buttons[7] = 0
+        #     stored_input_previous = stored_input
+
+
+        if stored_input == ['1']: # for executing script
+            Buttons[7] = 1
+            Buttons[0] = 0
+            # stored_input_previous = stored_input
+        elif stored_input == ['2']: # for homing robot
+            Buttons[0] = 1
+            Buttons[7] = 0
+        else: # for doing nothing
+            Buttons[7] = 0
+            Buttons[0] = 0
+            # stored_input_previous = stored_input
+
 
 
 
@@ -2616,26 +2651,42 @@ def Main(shared_string,Position_out,Speed_out,Command_out,Affected_joint_out,InO
          Position_in,Speed_in,Homed_in,InOut_in,Temperature_error_in,Position_error_in,Timeout_error,Timing_data_in,
          XTR_data,Gripper_data_in,
         Joint_jog_buttons,Cart_jog_buttons,Jog_control,General_data,Buttons))
+    
+    t4 = threading.Thread(target = reading_text_file, args = ( shared_string,Position_out,Speed_out,Command_out,Affected_joint_out,InOut_out,Timeout_out,Gripper_data_out,
+         Position_in,Speed_in,Homed_in,InOut_in,Temperature_error_in,Position_error_in,Timeout_error,Timing_data_in,
+         XTR_data,Gripper_data_in,
+        Joint_jog_buttons,Cart_jog_buttons,Jog_control,General_data,Buttons))
 
     t1.start()
     t2.start()
     t3.start()
+    t4.start()
 
 
 
-def GUI_process(shared_string,Position_out,Speed_out,Command_out,Affected_joint_out,InOut_out,Timeout_out,Gripper_data_out,
-         Position_in,Speed_in,Homed_in,InOut_in,Temperature_error_in,Position_error_in,Timeout_error,Timing_data_in,
-         XTR_data,Gripper_data_in,
-        Joint_jog_buttons,Cart_jog_buttons,Jog_control,General_data,Buttons):
+# def GUI_process(shared_string,Position_out,Speed_out,Command_out,Affected_joint_out,InOut_out,Timeout_out,Gripper_data_out,
+#          Position_in,Speed_in,Homed_in,InOut_in,Temperature_error_in,Position_error_in,Timeout_error,Timing_data_in,
+#          XTR_data,Gripper_data_in,
+#         Joint_jog_buttons,Cart_jog_buttons,Jog_control,General_data,Buttons):
 
-        GUI_PAROL_latest.GUI(shared_string,Position_out,Speed_out,Command_out,Affected_joint_out,InOut_out,Timeout_out,Gripper_data_out,
-         Position_in,Speed_in,Homed_in,InOut_in,Temperature_error_in,Position_error_in,Timeout_error,Timing_data_in,
-         XTR_data,Gripper_data_in,
-        Joint_jog_buttons,Cart_jog_buttons,Jog_control,General_data,Buttons)
+#         GUI_PAROL_latest.GUI(shared_string,Position_out,Speed_out,Command_out,Affected_joint_out,InOut_out,Timeout_out,Gripper_data_out,
+#          Position_in,Speed_in,Homed_in,InOut_in,Temperature_error_in,Position_error_in,Timeout_error,Timing_data_in,
+#          XTR_data,Gripper_data_in,
+#         Joint_jog_buttons,Cart_jog_buttons,Jog_control,General_data,Buttons)
 
 
-def SIMULATOR_process(Position_out,Position_in,Position_Sim,Buttons):
-    SIMULATOR_Robot.GUI(Position_out,Position_in,Position_Sim,Buttons)
+# def SIMULATOR_process(Position_out,Position_in,Position_Sim,Buttons):
+#     SIMULATOR_Robot.GUI(Position_out,Position_in,Position_Sim,Buttons)
+
+# def new_process(shared_string,Position_out,Speed_out,Command_out,Affected_joint_out,InOut_out,Timeout_out,Gripper_data_out,
+#          Position_in,Speed_in,Homed_in,InOut_in,Temperature_error_in,Position_error_in,Timeout_error,Timing_data_in,
+#          XTR_data,Gripper_data_in,
+#         Joint_jog_buttons,Cart_jog_buttons,Jog_control,General_data,Buttons):
+#     new_function_for_PAROL.new_input(shared_string,Position_out,Speed_out,Command_out,Affected_joint_out,InOut_out,Timeout_out,Gripper_data_out,
+#          Position_in,Speed_in,Homed_in,InOut_in,Temperature_error_in,Position_error_in,Timeout_error,Timing_data_in,
+#          XTR_data,Gripper_data_in,
+#         Joint_jog_buttons,Cart_jog_buttons,Jog_control,General_data,Buttons)
+
 
 # u PROCES kao argumenti idu multi proc arrays tu dolje u initi
 # Gore u thredovima i funkcijama to nazovem kako oćem i pozivam stvari iz toga i tjt
@@ -2678,7 +2729,7 @@ if __name__ == '__main__':
     Gripper_data_in = multiprocessing.Array("i",[1,1,1,1,1,1], lock=False)  
 
     # GUI control data
-    Homed_out = multiprocessing.Array("i",[1,1,1,1,1,1], lock=False) #changed the first element from 1 to 170
+    Homed_out = multiprocessing.Array("i",[1,1,1,1,1,1], lock=False) 
 
     #General robot vars
     Robot_GUI_mode =   multiprocessing.Value('i',0)
@@ -2707,27 +2758,36 @@ if __name__ == '__main__':
          XTR_data,Gripper_data_in,
         Joint_jog_buttons,Cart_jog_buttons,Jog_control,General_data,Buttons,])
     
-    process2 = multiprocessing.Process(target=GUI_process,args=[shared_string,Position_out,Speed_out,Command_out,Affected_joint_out,InOut_out,Timeout_out,Gripper_data_out,
-         Position_in,Speed_in,Homed_in,InOut_in,Temperature_error_in,Position_error_in,Timeout_error,Timing_data_in,
-         XTR_data,Gripper_data_in,
-        Joint_jog_buttons,Cart_jog_buttons,Jog_control,General_data,Buttons,])
+    # process2 = multiprocessing.Process(target=GUI_process,args=[shared_string,Position_out,Speed_out,Command_out,Affected_joint_out,InOut_out,Timeout_out,Gripper_data_out,
+    #      Position_in,Speed_in,Homed_in,InOut_in,Temperature_error_in,Position_error_in,Timeout_error,Timing_data_in,
+    #      XTR_data,Gripper_data_in,
+    #     Joint_jog_buttons,Cart_jog_buttons,Jog_control,General_data,Buttons,])
     
 
-    process3 = multiprocessing.Process(target=SIMULATOR_process,args =[Position_out,Position_in,Position_Sim,Buttons])
+    # process3 = multiprocessing.Process(target=SIMULATOR_process,args =[Position_out,Position_in,Position_Sim,Buttons])
 
+    # process4 = multiprocessing.Process(target=new_process,args = [shared_string,Position_out,Speed_out,Command_out,Affected_joint_out,InOut_out,Timeout_out,Gripper_data_out,
+    #      Position_in,Speed_in,Homed_in,InOut_in,Temperature_error_in,Position_error_in,Timeout_error,Timing_data_in,
+    #      XTR_data,Gripper_data_in,
+    #     Joint_jog_buttons,Cart_jog_buttons,Jog_control,General_data,Buttons,])
 
     process1.start()
     time.sleep(1)
-    process2.start()
-    time.sleep(1)
-    process3.start()
+    # process2.start()
+    # time.sleep(1)
+    # process3.start()
+    # time.sleep(1)
+    # process4.start()
+
     process1.join()
-    process2.join()
-    process3.join()
+    # process2.join()
+    # process3.join()
+    # process4.join()
 
     process1.terminate()
-    process2.terminate()
-    process3.terminate()
+    # process2.terminate()
+    # process3.terminate()
+    # process4.terminate()
 
 
 
